@@ -1,17 +1,14 @@
-import { init, openPage, getGenres, getGenreSelection, getRandomBookURL, addBookToCart } from './browser/browser';
-import cli from './cli';
-const config = require('./config.json');
+import { getGenreSelection, getRandomBookURL, addBookToCart } from './browser/browser';
+
 const runProgram = async () => {
     let selectedGenre = await getGenreSelection();
     if (selectedGenre) {
-        let x = await getRandomBookURL(selectedGenre)
-        if (x) {
-            let { data, page } = x;
+        let randomBookData = await getRandomBookURL(selectedGenre)
+        if (randomBookData) {
+            let { data, page } = randomBookData;
             await addBookToCart(page, data);
         }
-
     }
-
 }
 
 
