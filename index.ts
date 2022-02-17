@@ -1,9 +1,9 @@
-import { getGenreSelection, getRandomBookURL, addBookToCart } from './browser/browser';
+import { getGenreSelection, getRandomBookURL, addBookToCart } from './browser';
 
-const runProgram = async () => {
-    let selectedGenre = await getGenreSelection();
+const runProgram = async (): Promise<void> => {
+    let selectedGenre: string = await getGenreSelection();
     if (selectedGenre) {
-        let randomBookData = await getRandomBookURL(selectedGenre)
+        let randomBookData = await getRandomBookURL(selectedGenre);
         if (randomBookData) {
             let { data, page } = randomBookData;
             await addBookToCart(page, data);
@@ -12,9 +12,4 @@ const runProgram = async () => {
 }
 
 
-runProgram()
-
-
-
-
-
+runProgram();

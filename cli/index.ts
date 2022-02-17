@@ -1,8 +1,8 @@
-import inquirer from 'inquirer'
+import inquirer, { Answers } from 'inquirer'
 
-const promptUserGenreSelection = async (choices: any[]) => {
+const promptUserGenreSelection = async (choices: any[]): Promise<Answers> => {
 
-    const answers = await inquirer
+    const answers: Answers = await inquirer
         .prompt([
             {
                 type: "list",
