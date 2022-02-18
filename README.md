@@ -2,15 +2,6 @@
 
 ## Setup 
 
-### Clone repo
-```
-git clone https://github.com/paalwilliams/goodreads-amazon-puppeteer-
-```
-
-### Change directory into repo
-```
-cd goodreads-amazon-puppeteer
-```
 
 ### Install Node Version 14.8
 
@@ -29,9 +20,19 @@ nvm install 14
 ```
 If you have Node 14.8 and nvm installed, run: 
 ```
-nvm use
+nvm use 14
 ```
 ---
+
+### Clone repo
+```
+git clone https://github.com/paalwilliams/goodreads-amazon-puppeteer-
+```
+
+### Change directory into repo
+```
+cd goodreads-amazon-puppeteer
+```
 ### Install dependencies
 
 ```
