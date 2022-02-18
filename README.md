@@ -47,3 +47,5 @@ node index.js
 It may take a while for the initial run to start up.
 
 `Important!` You must close all running Chrome instances prior to running this application.
+
+This application requires that Google Chrome be installed.
