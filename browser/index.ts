@@ -1,6 +1,5 @@
 import { Browser, ElementHandle, Page, TimeoutError } from "puppeteer";
 const config = require('../config.json');
-import cli from '../cli';
 const puppeteer = require('puppeteer');
 
 export const init = async (): Promise<Browser> => {
