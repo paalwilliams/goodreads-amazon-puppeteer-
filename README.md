@@ -44,6 +44,6 @@ node index.js
 ```
 
 ### Notes
-It may take a while for the initial run to work.
+It may take a while for the initial run to start up.
 
 `Important!` You must close all running Chrome instances prior to running this application.
