@@ -5,20 +5,17 @@ const puppeteer = require('puppeteer');
 
 export const init = async (): Promise<Browser> => {
     try {
-        console.log("Opening Chrome Instance");
-        const browser: Browser = await puppeteer.launch({ headless: false, executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
+        const browser: Browser = await puppeteer.launch({ headless: false, executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", defaultViewport: null });
         return browser;
 
     } catch (error: any) {
         return error;
     }
-
 }
 
 export const openPage = async (browser: Browser, url: string): Promise<Page> => {
     try {
         const page: Page = await browser.newPage();
-        await page.setViewport({ width: 1920, height: 1080 });
         await page.goto(url)
         return page
     } catch (e: any) {
@@ -49,13 +46,11 @@ export const getGenres = async (page: Page): Promise<GenreData[]> => {
     return data;
 }
 
-export const getGenreSelection = async (): Promise<any> => {
+export const getGenreSelection = async (b: Browser): Promise<any> => {
     try {
-        let b: Browser = await init();
         let page = await openPage(b, `${config.baseURL}${config.genreListPath}`);
         if (page) {
             let genres = await getGenres(page);
-            b.close();
             let { genreSelection } = await cli.promptUserGenreSelection(genres);
             return genreSelection;
         }
@@ -68,9 +63,8 @@ export const getGenreSelection = async (): Promise<any> => {
 
 // Should return only a url and not navigate to it.
 
-export const getRandomBookURL = async (genreSelectionPath: string): Promise<any> => {
+export const getRandomBookURL = async (genreSelectionPath: string, b: Browser): Promise<any> => {
     try {
-        const b = await init();
         const page = await openPage(b, `${config.baseURL}${genreSelectionPath}`);
         if (page) {
             let data = await page.evaluate(() => {
@@ -94,17 +88,27 @@ export const getRandomBookURL = async (genreSelectionPath: string): Promise<any>
 
 }
 
-export const addBookToCart = async (page: Page, url: string): Promise<void> => {
+export const addBookToCart = async (page: Page, url?: string): Promise<void> => {
     try {
-        await page.goto(url)
+        if (url) {
+            try {
+                await page.goto(url)
+            }
+            catch (e) {
+                console.log('refreshing page')
+                await page.reload()
+            }
+        }
         const addTocartButton: ElementHandle<Element> | null = await page.$('[id^=add-to-cart-button]')
         if (addTocartButton) {
             await page.click('[id^=add-to-cart-button]')
-            console.log("Book Added to Cart");
-            await goToCart(page, "https://www.amazon.com/gp/buy/spc/handlers/display.html?hasWorkingJavascript=1")
+            setTimeout(async () => {
+                await goToCart(page, "https://www.amazon.com/gp/buy/spc/handlers/display.html?hasWorkingJavascript=1")
+            }, 2000)
         }
         else {
-            console.log('There is no add to cart button.');
+            await page?.click('h2>a.a-link-normal');
+            addBookToCart(page)
         }
 
     } catch (error: any) {
