@@ -14,7 +14,7 @@ export default class GoodReadsBrowser extends BrowserNavigator {
 
     public static async init(): Promise<IGoodReadsBrowser | undefined> {
         try {
-            const browser = await puppeteer.launch({ headless: true, defaultViewport: null });
+            const browser = await puppeteer.launch({ headless: true });
             const page = await browser.newPage();
             return new GoodReadsBrowser(browser, page);
         } catch (e: any) {

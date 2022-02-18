@@ -3,9 +3,11 @@ import AmazonBrowser from "./lib/AmazonBrowser";
 import GoodReadsBrowser from "./lib/GoodReadsBrowser";
 import UserCLI from "./lib/UserCLI";
 
+
 // Wrapper function to provide top level await.
 const runProgram = async () => {
     try {
+
         const goodReadsBrowser = await GoodReadsBrowser.init();
         if (!goodReadsBrowser) {
             throw 'Error Instantiating Browser.'

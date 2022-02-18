@@ -3,19 +3,25 @@ import BrowserNavigator from "../BrowserNavigator";
 import puppeteer from "puppeteer";
 import { IAmazonBrowser } from "../types";
 const config = require('../../config.json');
-
+const chromeLauncher = require("chrome-launcher/dist/chrome-launcher");
+const util = require('util');
+const request = require('request');
 
 export default class AmazonBrowser extends BrowserNavigator {
 
     constructor(browser: Browser, activePage: Page) {
         super(browser, activePage);
     }
-
-    public static async init(): Promise<IAmazonBrowser | undefined> {
+    public static async init(): Promise<any> {
         try {
             console.clear();
             console.log("Opening Amazon browser...");
-            const browser = await puppeteer.launch({ headless: false, defaultViewport: null, ignoreDefaultArgs: ["--enable-automation"] });
+            let chrome = await chromeLauncher.launch({
+                userDataDir: false,
+            })
+            const resp = await util.promisify(request)(`http://localhost:${chrome.port}/json/version`);
+            const { webSocketDebuggerUrl } = JSON.parse(resp.body);
+            const browser = await puppeteer.connect({ browserWSEndpoint: webSocketDebuggerUrl, defaultViewport: null });
             const page = await browser.newPage();
             return new AmazonBrowser(browser, page);
         } catch (e) {
