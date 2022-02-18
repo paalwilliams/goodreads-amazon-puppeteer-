@@ -47,7 +47,7 @@ export default class AmazonBrowser extends BrowserNavigator {
             if (!addTocartButton) {
                 throw 'No Add to Cart Button.'
             }
-        } catch (error) {
+        } catch (e) {
             const nonPhysical = await this.activePage.evaluate(() => {
                 const kindle = document.getElementById("productSubtitle")?.textContent?.toLowerCase().includes('kindle')
                 const audible = document.getElementById("productBinding")?.textContent?.toLowerCase().includes('audible')
@@ -74,11 +74,13 @@ export default class AmazonBrowser extends BrowserNavigator {
     }
 
     public async switchToPhysicalEdition(): Promise<void> {
-
-        let [button] = await this.activePage.$x("//span[text()[contains(.,'Hardcover')  or contains(.,'Paperback')]]")
-
-        let text = await this.activePage.evaluate(span => span.parentElement.getAttribute('href'), button);
-        await this.navigateToURL(`${config.amazonBaseURL}${text}`);
+        try {
+            let [button] = await this.activePage.$x("//span[text()[contains(.,'Hardcover')  or contains(.,'Paperback')]]")
+            let text = await this.activePage.evaluate(span => span.parentElement.getAttribute('href'), button);
+            await this.navigateToURL(`${config.amazonBaseURL}${text}`);
+        } catch (e) {
+            console.error(e)
+        }
 
     }
 
