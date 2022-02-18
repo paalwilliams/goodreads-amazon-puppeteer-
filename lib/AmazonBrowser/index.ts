@@ -42,18 +42,43 @@ export default class AmazonBrowser extends BrowserNavigator {
         try {
             console.clear()
             console.log("Adding product to cart...");
-            // Select add to cart button and click
+            // Select add to cart button and click checkout
             const addTocartButton: ElementHandle<Element> | null = await this.activePage.$('[id^=add-to-cart-button]');
             if (!addTocartButton) {
-                // If there is no add to cart button, we are most likely on the search results page.
+                throw 'No Add to Cart Button.'
+            }
+        } catch (error) {
+            const nonPhysical = await this.activePage.evaluate(() => {
+                const kindle = document.getElementById("productSubtitle")?.textContent?.toLowerCase().includes('kindle')
+                const audible = document.getElementById("productBinding")?.textContent?.toLowerCase().includes('audible')
+                return kindle || audible;
+            })
+
+            if (nonPhysical) {
+                // If there is no add to cart button, we are most likely on the Kindle or Audible Edition Page.
+                // We want to switch from the Kindle Edition to a physical copy so the 'Add To Cart' button appears.
+                await this.switchToPhysicalEdition();
+
+            }
+            else {
+                // If it is not the kindle edition, and there is no add to cart button, we are most likely on the search results page.
                 // We want to click the link of the first result, which should take us to the product listing page 
-                // We can continue on from there.
                 await this.resultsPageToProductListing();
             }
-            await this.activePage.click('[id^=add-to-cart-button]');
-        } catch (e) {
-            console.error(e);
         }
+        finally {
+            await this.activePage.click('[id^=add-to-cart-button]');
+
+        }
+
+    }
+
+    public async switchToPhysicalEdition(): Promise<void> {
+
+        let [button] = await this.activePage.$x("//span[text()[contains(.,'Hardcover')  or contains(.,'Paperback')]]")
+
+        let text = await this.activePage.evaluate(span => span.parentElement.getAttribute('href'), button);
+        await this.navigateToURL(`${config.amazonBaseURL}${text}`);
 
     }
 
@@ -79,14 +104,22 @@ export default class AmazonBrowser extends BrowserNavigator {
         try {
             console.clear();
             console.log("Navigating to the checkout page...");
-            await this.navigateToURL(config.amazonCheckoutURL);
+            let [button] = await this.activePage.$x("//input[@name='proceedToRetailCheckout']")
+            if (!button) {
+                await this.navigateToURL(config.amazonCartURL);
+            }
+            await this.proceedToCheckout()
         } catch (e) {
             console.error(e);
         }
     }
 
     public async proceedToCheckout(): Promise<void> {
-        await this.activePage.click("input[name=proceedToRetailCheckout]");
+        try {
+            await this.activePage.click("input[name=proceedToRetailCheckout]");
+        } catch (e) {
+            console.error(e);
+        }
 
     }
 }

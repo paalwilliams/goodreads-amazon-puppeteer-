@@ -39,11 +39,7 @@ export default class BrowserNavigator {
         }
     }
 
-    public async disconnect() {
-        try {
-            await this.browser.disconnect();
-        } catch (e) {
-            console.error(e);
-        }
+    public async disconnect(): Promise<void> {
+        await this.browser.disconnect()
     }
 }

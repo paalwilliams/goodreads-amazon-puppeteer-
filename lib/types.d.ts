@@ -3,9 +3,9 @@ export interface IBrowserNavigator {
     activePage: Page;
     navigateToURL: (url: string) => Promise<void>;
     close: () => Promise<void>;
-    disconnect: () => Promise<void>;
     init?: () => IBrowserNavigator;
     close: () => Promise<void>;
+    disconnect: () => Promise<void>;
 }
 
 export interface IAmazonBrowser extends BrowserNavigator {
@@ -15,7 +15,6 @@ export interface IAmazonBrowser extends BrowserNavigator {
     navigateToCheckoutPage: () => Promise<void>;
     init?: () => IAmazonBrowser;
     close: () => Promise<void>;
-    disconnect: () => Promise<void>;
     proceedToCheckout: () => Promise<void>;
 
 }
@@ -25,7 +24,6 @@ export interface IGoodReadsBrowser extends BrowserNavigator {
     getGenreOptions: () => Promise<any>;
     init?: () => IGoodReadsBrowser | any;
     close: () => Promise<void>;
-    disconnect: () => Promise<void>;
 
 }
 
