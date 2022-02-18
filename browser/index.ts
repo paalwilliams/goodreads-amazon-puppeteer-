@@ -1,3 +1,4 @@
+import { Answers } from "inquirer";
 import { Browser, ElementHandle, Page } from "puppeteer";
 const config = require('../config.json');
 import cli from '../cli';
@@ -5,8 +6,7 @@ const puppeteer = require('puppeteer');
 
 export const init = async (): Promise<Browser> => {
     try {
-        console.log("Opening Chrome Instance");
-        const browser: Browser = await puppeteer.launch({ headless: false, executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
+        const browser: Browser = puppeteer.launch({ headless: false, executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", defaultViewport: null });
         return browser;
 
     } catch (error: any) {
@@ -18,7 +18,6 @@ export const init = async (): Promise<Browser> => {
 export const openPage = async (browser: Browser, url: string): Promise<Page> => {
     try {
         const page: Page = await browser.newPage();
-        await page.setViewport({ width: 1920, height: 1080 });
         await page.goto(url)
         return page
     } catch (e: any) {
@@ -27,7 +26,7 @@ export const openPage = async (browser: Browser, url: string): Promise<Page> => 
     }
 }
 
-interface GenreData {
+export interface GenreData {
     value: string,
     name: string,
 }
@@ -49,16 +48,17 @@ export const getGenres = async (page: Page): Promise<GenreData[]> => {
     return data;
 }
 
-export const getGenreSelection = async (): Promise<any> => {
+export const getGenreSelection = async (): Promise<string | void> => {
     try {
-        let b: Browser = await init();
-        let page = await openPage(b, `${config.baseURL}${config.genreListPath}`);
-        if (page) {
-            let genres = await getGenres(page);
-            b.close();
-            let { genreSelection } = await cli.promptUserGenreSelection(genres);
-            return genreSelection;
+        const b: Browser = await init();
+        const page = await openPage(b, `${config.baseURL}${config.genreListPath}`);
+        if (!page) {
+            return;
         }
+        let genres = await getGenres(page);
+        b.close();
+        const { genreSelection } = await cli.promptUserGenreSelection(genres);
+        return genreSelection;
     }
     catch (e: any) {
         console.log(e)
@@ -76,8 +76,8 @@ export const getRandomBookURL = async (genreSelectionPath: string): Promise<any>
             let data = await page.evaluate(() => {
                 const items: any = document.querySelectorAll('.answerWrapper')
                 if (items) {
-                    const randIndex = Math.floor(Math.random() * items.length)
-                    const goodReadsID = items[randIndex].firstElementChild.getAttribute('data-resource-id')
+                    const randIndex: number = Math.floor(Math.random() * items.length)
+                    const goodReadsID: string = items[randIndex].firstElementChild.getAttribute('data-resource-id')
                     const url = `https://www.goodreads.com/buy_buttons/12/follow?book_id=${goodReadsID}`
                     return url;
                 }
@@ -91,7 +91,6 @@ export const getRandomBookURL = async (genreSelectionPath: string): Promise<any>
     } catch (error) {
         console.log(error)
     }
-
 }
 
 export const addBookToCart = async (page: Page, url: string): Promise<void> => {
@@ -99,9 +98,10 @@ export const addBookToCart = async (page: Page, url: string): Promise<void> => {
         await page.goto(url)
         const addTocartButton: ElementHandle<Element> | null = await page.$('[id^=add-to-cart-button]')
         if (addTocartButton) {
-            await page.click('[id^=add-to-cart-button]')
-            console.log("Book Added to Cart");
-            await goToCart(page, "https://www.amazon.com/gp/buy/spc/handlers/display.html?hasWorkingJavascript=1")
+            await page.click('[id^=add-to-cart-button]');
+            setTimeout(async () => {
+                await goToCart(page, config.amazonCheckoutURL)
+            }, 1000)
         }
         else {
             console.log('There is no add to cart button.');
@@ -112,9 +112,8 @@ export const addBookToCart = async (page: Page, url: string): Promise<void> => {
     }
 }
 
-export const goToCart = async (page: Page, url: string) => {
+export const goToCart = async (page: Page, url: string): Promise<void> => {
     await page.goto(url)
-
 }
 
 const browser = {
