@@ -4,13 +4,24 @@
 
 ### Install Node Version 14.8
 
-To install node using
-[Node Version Manager](https://github.com/nvm-sh/nvm)
-Run: 
+#### From [nodejs.dev](https://www.nodejs.dev)
+Visit 
+[https://www.nodejs.dev](https://nodejs.dev/download/) and select `14` and click download.
+
+---
+
+#### Using [Node Version Manager](https://github.com/nvm-sh/nvm)
+
+
+To install node using nvm run:
+```
+nvm install 14
+```
+If you have Node 14.8 and nvm installed, run: 
 ```
 nvm use
 ```
-
+---
 ### Install dependencies
 
 ```
