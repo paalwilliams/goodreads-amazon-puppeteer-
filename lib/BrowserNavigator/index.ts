@@ -1,5 +1,6 @@
 import { Browser, Page } from "puppeteer";
 import puppeteer from 'puppeteer';
+import { IAmazonBrowser, IBrowserNavigator, IGoodReadsBrowser } from "../types";
 
 export default class BrowserNavigator {
 
@@ -12,29 +13,37 @@ export default class BrowserNavigator {
         this.activePage = page;
     }
 
-    public static async init() {
+    public static async init(): Promise<IBrowserNavigator | IAmazonBrowser | IGoodReadsBrowser | undefined | Error> {
         try {
             const browser = await puppeteer.launch({ headless: false, defaultViewport: null });
             const page = await browser.newPage();
             return new BrowserNavigator(browser, page);
-        } catch (error: any) {
-            console.log(error);
+        } catch (e) {
+            console.error(e);
         }
     }
 
-    public async navigateToURL(url: string) {
+    public async navigateToURL(url: string): Promise<void> {
         try {
-            await this.activePage?.goto(url)
-        } catch (error: any) {
-            console.log(error)
+            await this.activePage?.goto(url);
+        } catch (e) {
+            console.error(e);
         }
     }
 
     public async close() {
         try {
             await this.browser.close();
-        } catch (error) {
-            console.log(error);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    public async disconnect() {
+        try {
+            await this.browser.disconnect();
+        } catch (e) {
+            console.error(e);
         }
     }
 }

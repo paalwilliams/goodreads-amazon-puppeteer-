@@ -2,5 +2,6 @@
     "baseURL": "https://www.goodreads.com",
     "genreListPath": "/choiceawards/best-books-2020",
     "amazonCheckoutURL": "https://www.amazon.com/gp/cart/view.html",
-    "amazonBaseURL": "https://www.amazon.com"
+    "amazonBaseURL": "https://www.amazon.com",
+    "username": "paalwilliams"
 }
