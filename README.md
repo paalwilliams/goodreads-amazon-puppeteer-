@@ -2,6 +2,16 @@
 
 ## Setup 
 
+### Clone repo
+```
+git clone https://github.com/paalwilliams/goodreads-amazon-puppeteer-
+```
+
+### Change directory into repo
+```
+cd goodreads-amazon-puppeteer
+```
+
 ### Install Node Version 14.8
 
 #### From [nodejs.dev](https://www.nodejs.dev)
