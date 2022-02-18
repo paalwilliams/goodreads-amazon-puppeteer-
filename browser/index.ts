@@ -1,4 +1,4 @@
-import { Browser, ElementHandle, Page } from "puppeteer";
+import { Browser, ElementHandle, Page, TimeoutError } from "puppeteer";
 const config = require('../config.json');
 import cli from '../cli';
 const puppeteer = require('puppeteer');
@@ -116,8 +116,23 @@ export const addBookToCart = async (page: Page, url?: string): Promise<void> => 
     }
 }
 
+export const navigate = async (page: Page, url: string) => {
+    try {
+        await page.goto(url)
+        return page;
+    }
+    catch (e: any) {
+        if (e instanceof TimeoutError) {
+            navigate(page, url);
+        }
+        else {
+            console.log(e)
+        }
+    }
+
+}
+
 export const goToCart = async (page: Page, url: string) => {
-    await page.goto(url)
 
 }
 
