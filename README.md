@@ -62,7 +62,7 @@ Use your arrow keys to move through the different choices, and hit the `enter` k
 
 Once you hit enter, the application will select a random book from that genre, find the listing on Amazon, add it to your cart, and display the checkout page. 
 
-If you are not logged in, it will prompt you to sign in to amazon before you can view the checkout page.
+If you are not logged in, Amazon will prompt you to sign in before you can view the checkout page.
 
 ### Notes
 It may take a while for the initial run to start up.
