@@ -54,6 +54,12 @@ tsc
 node index.js
 ```
 
+You will see output in the terminal about the current state of the application. Once it has fetched the available genres you will be prompted to select one.
+
+<img width="441" alt="Screen Shot 2022-02-19 at 12 12 01 AM" src="https://user-images.githubusercontent.com/49243504/154788879-b5e095b4-adaf-4644-82ea-a6ed2e2c0956.png">
+
+Use your arrow keys and hit the `enter` key once you choose one. 
+
 ### Notes
 It may take a while for the initial run to start up.
 
