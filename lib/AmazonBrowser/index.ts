@@ -48,13 +48,9 @@ export default class AmazonBrowser extends BrowserNavigator {
                 throw 'No Add to Cart Button.'
             }
         } catch (e) {
-            const nonPhysical = await this.activePage.evaluate(() => {
-                const kindle = document.getElementById("productSubtitle")?.textContent?.toLowerCase().includes('kindle')
-                const audible = document.getElementById("productBinding")?.textContent?.toLowerCase().includes('audible')
-                return kindle || audible;
-            })
 
-            if (nonPhysical) {
+
+            if (await this.isNonPhysicalEdition()) {
                 // If there is no add to cart button, we are most likely on the Kindle or Audible Edition Page.
                 // We want to switch from the Kindle Edition to a physical copy so the 'Add To Cart' button appears.
                 await this.switchToPhysicalEdition();
@@ -64,6 +60,10 @@ export default class AmazonBrowser extends BrowserNavigator {
                 // If it is not the kindle edition, and there is no add to cart button, we are most likely on the search results page.
                 // We want to click the link of the first result, which should take us to the product listing page 
                 await this.resultsPageToProductListing();
+
+                if (await this.isNonPhysicalEdition()) {
+                    await this.switchToPhysicalEdition();
+                }
             }
         }
         finally {
@@ -82,6 +82,19 @@ export default class AmazonBrowser extends BrowserNavigator {
             console.error(e)
         }
 
+    }
+
+    public async isNonPhysicalEdition(): Promise<Boolean | undefined> {
+        try {
+            const nonPhysical = await this.activePage.evaluate(() => {
+                const kindle = document.getElementById("productSubtitle")?.textContent?.toLowerCase().includes('kindle')
+                const audible = document.getElementById("productBinding")?.textContent?.toLowerCase().includes('audible')
+                return !!(kindle || audible);
+            })
+            return nonPhysical;
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     public async resultsPageToProductListing(): Promise<void> {

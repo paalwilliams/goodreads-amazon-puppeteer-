@@ -29,7 +29,6 @@ const runProgram = async () => {
         await amazonBrowser.addProductToCart();
         setTimeout(async () => {
             await amazonBrowser.navigateToCheckoutPage();
-            // await amazonBrowser.proceedToCheckout();
             await amazonBrowser.disconnect();
             console.clear();
             console.log("All done! Enjoy your book. 📕📕📕")
