@@ -43,32 +43,25 @@ export default class AmazonBrowser extends BrowserNavigator {
             console.clear()
             console.log("Adding product to cart...");
             // Select add to cart button and click checkout
-            const addTocartButton: ElementHandle<Element> | null = await this.activePage.$('[id^=add-to-cart-button]');
-            if (!addTocartButton) {
-                throw 'No Add to Cart Button.'
+
+            // Sometimes, the URL from GoodReads takes us to the results page. If so, we want to redirect to the product listing for the first result.
+            if (await this.isResultsPage()) {
+                await this.resultsPageToProductListing();
             }
-        } catch (e) {
 
 
             if (await this.isNonPhysicalEdition()) {
                 // If there is no add to cart button, we are most likely on the Kindle or Audible Edition Page.
                 // We want to switch from the Kindle Edition to a physical copy so the 'Add To Cart' button appears.
                 await this.switchToPhysicalEdition();
-
             }
-            else {
-                // If it is not the kindle edition, and there is no add to cart button, we are most likely on the search results page.
-                // We want to click the link of the first result, which should take us to the product listing page 
-                await this.resultsPageToProductListing();
-
-                if (await this.isNonPhysicalEdition()) {
-                    await this.switchToPhysicalEdition();
-                }
+            const addTocartButton: ElementHandle<Element> | null = await this.activePage.$('[id^=add-to-cart-button]');
+            if (!addTocartButton) {
+                throw 'No Add to Cart Button.'
             }
-        }
-        finally {
             await this.activePage.click('[id^=add-to-cart-button]');
-
+        } catch (e) {
+            console.log(e);
         }
 
     }
@@ -95,6 +88,19 @@ export default class AmazonBrowser extends BrowserNavigator {
         } catch (e) {
             console.error(e)
         }
+    }
+
+    public async isResultsPage(): Promise<Boolean | undefined> {
+        try {
+            const isResultsPage = await this.activePage.evaluate(() => {
+                const searchContainer = document.querySelector("div.s-search-results");
+                return !!searchContainer;
+            })
+            return !!isResultsPage;
+        } catch (e) {
+            console.error(e)
+        }
+
     }
 
     public async resultsPageToProductListing(): Promise<void> {
